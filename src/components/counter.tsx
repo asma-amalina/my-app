@@ -26,22 +26,12 @@ const Counter: React.FC = () =>{
       setOutputList(textInputsArray);
     }else{
       setOutputList([]);
-      rendertable ();
     };
   };
 
   useEffect(() => {
     generateTableObjects();
   }, [outputList,searchVal]); 
-
-  useEffect(() => {
-    generateTableObjects();
-    sortList(generateTableType);
-  }, [searchVal]);   
-
-  useEffect(() => {
-    sortList(generateTableType);
-  }, [generateTableType]); 
   
   const generateTableObjects = () => {
 
@@ -76,16 +66,25 @@ const Counter: React.FC = () =>{
         };  
     };
     setOutputListFinalObjects(finalList);
+    mySort (finalList,generateTableType);
   };  
 
   const handleClick = (e:any) => {
-    sortList(e.target.id);
     setGenerateTableType(e.target.id);
   };
 
+  useEffect(() => {
+    sortList(generateTableType);
+  }, [generateTableType]);  
+
   const sortList = (e: any) => {                
-    let objectToSort = outputListFinalObjects
-    e!=="default"?mySort (objectToSort,e): generateTableObjects();
+    let objectToSort = [...outputListFinalObjects]
+    if(e!=="default"){
+      mySort (objectToSort,e);
+      setOutputListFinalObjects(objectToSort);
+    }else{
+      generateTableObjects();
+    };
   };
 
   const rendertable = () => {
@@ -96,10 +95,6 @@ const Counter: React.FC = () =>{
         <tr key={index}><td>{index+1}</td><td>{data[1].value}</td><td>{data[1].count}</td></tr>                        
       ))
     };
-  };
-
-  const showAssumptions = () =>{
-    setAssumptionsToggle(true);
   };
 
   return(
@@ -128,7 +123,7 @@ const Counter: React.FC = () =>{
       <div className="row">
         <div className="col searchDiv">
             <span>Search: </span>
-            <input type="text"  onChange= {e =>setSearchVal(e.target.value)} className="wordSearch" />
+            <input type="text"  onChange= {e =>setSearchVal(e.target.value)} className="wordSearch" />           
         </div>
       </div>
       <div className="row">
